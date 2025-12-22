@@ -42,9 +42,14 @@ class Client
     protected string $token;
 
     /**
-     * @var string Идентификатор организации
+     * @var string|null Идентификатор организации
      */
-    protected string $orgId;
+    protected ?string $orgId = null;
+
+    /**
+     * @var string|null Cloud organisation ID
+     */
+    protected ?string $cloudOrgId = null;
 
     private static ?Client $instance = null;
 
@@ -83,6 +88,13 @@ class Client
         return $this;
     }
 
+    public function setCloudOrgId(?string $cloudOrgId): self
+    {
+        $this->cloudOrgId = $cloudOrgId;
+
+        return $this;
+    }
+
     /**
      * Устанавливает флаг isMultiPartRequest
      *
@@ -116,6 +128,13 @@ class Client
                 'X-Org-ID'      => $this->orgId,
             ],
         ];
+
+        if ($this->orgId){
+            $options['headers']['X-Org-ID'] = $this->orgId;
+        }
+        if ($this->cloudOrgId){
+            $options['headers']['X-Cloud-Org-ID'] = $this->cloudOrgId;
+        }
 
         if ($this->isMultiPartRequest) {
             if (!is_string($body) && !is_resource($body)) {
