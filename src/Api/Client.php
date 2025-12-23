@@ -42,14 +42,14 @@ class Client
     protected string $token;
 
     /**
-     * @var string|null Идентификатор организации
+     * @var string Идентификатор организации
      */
-    protected ?string $orgId = null;
+    protected string $orgId;
 
     /**
-     * @var string|null Cloud organisation ID
+     * @var bool True if the organization is Cloud
      */
-    protected ?string $cloudOrgId = null;
+    protected bool $isCloud = true;
 
     private static ?Client $instance = null;
 
@@ -88,9 +88,9 @@ class Client
         return $this;
     }
 
-    public function setCloudOrgId(?string $cloudOrgId): self
+    public function setIsCloud(bool $isCloud): self
     {
-        $this->cloudOrgId = $cloudOrgId;
+        $this->isCloud = $isCloud;
 
         return $this;
     }
@@ -125,16 +125,9 @@ class Client
         $options = [
             'headers'=> [
                 'Authorization' => 'OAuth '.$this->token,
-                'X-Org-ID'      => $this->orgId,
+                ($this->isCloud ? 'X-Cloud-Org-ID' : 'X-Org-ID') => $this->orgId,
             ],
         ];
-
-        if ($this->orgId){
-            $options['headers']['X-Org-ID'] = $this->orgId;
-        }
-        if ($this->cloudOrgId){
-            $options['headers']['X-Cloud-Org-ID'] = $this->cloudOrgId;
-        }
 
         if ($this->isMultiPartRequest) {
             if (!is_string($body) && !is_resource($body)) {

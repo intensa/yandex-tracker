@@ -29,18 +29,18 @@ use BugrovWeb\YandexTracker\Exceptions\TrackerConstructorException;
  */
 class Tracker
 {
-    public function __construct(string $token, ?string $orgId, ?string $cloudOrgId)
+    public function __construct(string $token, string $orgId, bool $isCloud)
     {
         if (!$token) {
             throw new TrackerAuthConfigException('Token is required');
         }
-        if (!$orgId && !$cloudOrgId) {
-            throw new TrackerAuthConfigException('Either orgId or cloudOrgId is required');
+        if (!$orgId) {
+            throw new TrackerAuthConfigException('Organization Id is required');
         }
 
         Client::getInstance()->setToken($token);
         Client::getInstance()->setOrgId($orgId);
-        Client::getInstance()->setCloudOrgId($cloudOrgId);
+        Client::getInstance()->setIsCloud($isCloud);
     }
 
     /**
