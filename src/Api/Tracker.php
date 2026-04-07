@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BugrovWeb\YandexTracker\Api;
 
+use BugrovWeb\YandexTracker\Exceptions\TrackerAuthConfigException;
 use BugrovWeb\YandexTracker\Exceptions\TrackerConstructorException;
 
 /**
@@ -24,13 +27,20 @@ use BugrovWeb\YandexTracker\Exceptions\TrackerConstructorException;
  * @method Field field() Класс для работы с полями задач
  * @method User user() Класс для работы с пользователями
  */
-
 class Tracker
 {
-    public function __construct(string $token, string $xOrgId)
+    public function __construct(string $token, string $orgId, bool $isCloud)
     {
+        if (!$token) {
+            throw new TrackerAuthConfigException('Token is required');
+        }
+        if (!$orgId) {
+            throw new TrackerAuthConfigException('Organization Id is required');
+        }
+
         Client::getInstance()->setToken($token);
-        Client::getInstance()->setOrgId($xOrgId);
+        Client::getInstance()->setOrgId($orgId);
+        Client::getInstance()->setIsCloud($isCloud);
     }
 
     /**

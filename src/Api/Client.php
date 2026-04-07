@@ -46,6 +46,11 @@ class Client
      */
     protected string $orgId;
 
+    /**
+     * @var bool True if the organization is Cloud
+     */
+    protected bool $isCloud = true;
+
     private static ?Client $instance = null;
 
     public static function getInstance(): self
@@ -83,6 +88,13 @@ class Client
         return $this;
     }
 
+    public function setIsCloud(bool $isCloud): self
+    {
+        $this->isCloud = $isCloud;
+
+        return $this;
+    }
+
     /**
      * Устанавливает флаг isMultiPartRequest
      *
@@ -113,7 +125,7 @@ class Client
         $options = [
             'headers'=> [
                 'Authorization' => 'OAuth '.$this->token,
-                'X-Org-ID'      => $this->orgId,
+                ($this->isCloud ? 'X-Cloud-Org-ID' : 'X-Org-ID') => $this->orgId,
             ],
         ];
 
